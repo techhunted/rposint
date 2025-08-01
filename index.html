@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT Web Application</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .osint-card { transition: transform 0.3s ease; border: none; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .osint-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); }
+        .tool-result { background: #f8f9fa; border-radius: 8px; padding: 15px; margin: 10px 0; border-left: 4px solid #007bff; }
+        .ai-analysis { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px; padding: 20px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <h1 class="display-4 text-primary">
+                        <i class="fas fa-search"></i> OSINT Web Application
+                    </h1>
+                    <p class="lead">Powerful Open Source Intelligence Tools</p>
+                    <div class="alert alert-info">
+                        <strong>Status:</strong> Application is running successfully! 
+                        <br>Template loading issue detected - using fallback template.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card osint-card">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="fas fa-phone"></i> Phone Number Analysis</h5>
+                    </div>
+                    <div class="card-body">
+                        <input type="text" class="form-control mb-3" id="phoneInput" placeholder="Enter phone number">
+                        <button class="btn btn-primary" onclick="analyzePhone()">Analyze</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="card osint-card">
+                    <div class="card-header bg-success text-white">
+                        <h5><i class="fas fa-envelope"></i> Email Analysis</h5>
+                    </div>
+                    <div class="card-body">
+                        <input type="email" class="form-control mb-3" id="emailInput" placeholder="Enter email address">
+                        <button class="btn btn-success" onclick="analyzeEmail()">Analyze</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card osint-card">
+                    <div class="card-header bg-warning text-dark">
+                        <h5><i class="fas fa-globe"></i> Website Analysis</h5>
+                    </div>
+                    <div class="card-body">
+                        <input type="text" class="form-control mb-3" id="domainInput" placeholder="Enter domain">
+                        <button class="btn btn-warning" onclick="analyzeWebsite()">Analyze</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="card osint-card">
+                    <div class="card-header bg-info text-white">
+                        <h5><i class="fas fa-user"></i> Social Media Analysis</h5>
+                    </div>
+                    <div class="card-body">
+                        <input type="text" class="form-control mb-3" id="usernameInput" placeholder="Enter username">
+                        <button class="btn btn-info" onclick="analyzeSocial()">Analyze</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card osint-card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5><i class="fas fa-network-wired"></i> IP Address Analysis</h5>
+                    </div>
+                    <div class="card-body">
+                        <input type="text" class="form-control mb-3" id="ipInput" placeholder="Enter IP address">
+                        <button class="btn btn-secondary" onclick="analyzeIP()">Analyze</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="card osint-card">
+                    <div class="card-header bg-dark text-white">
+                        <h5><i class="fas fa-search"></i> Shodan Search</h5>
+                    </div>
+                    <div class="card-body">
+                        <input type="text" class="form-control mb-3" id="shodanInput" placeholder="Enter search query">
+                        <button class="btn btn-dark" onclick="searchShodan()">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="results" class="mt-4"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function analyzePhone() {
+            const phone = document.getElementById('phoneInput').value;
+            if (!phone) return alert('Please enter a phone number');
+            
+            fetch('/api/phone', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({phone_number: phone})
+            })
+            .then(response => response.json())
+            .then(data => displayResults('Phone Analysis', data))
+            .catch(error => console.error('Error:', error));
+        }
+        
+        function analyzeEmail() {
+            const email = document.getElementById('emailInput').value;
+            if (!email) return alert('Please enter an email address');
+            
+            fetch('/api/email', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email: email})
+            })
+            .then(response => response.json())
+            .then(data => displayResults('Email Analysis', data))
+            .catch(error => console.error('Error:', error));
+        }
+        
+        function analyzeWebsite() {
+            const domain = document.getElementById('domainInput').value;
+            if (!domain) return alert('Please enter a domain');
+            
+            fetch('/api/website', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({domain: domain})
+            })
+            .then(response => response.json())
+            .then(data => displayResults('Website Analysis', data))
+            .catch(error => console.error('Error:', error));
+        }
+        
+        function analyzeSocial() {
+            const username = document.getElementById('usernameInput').value;
+            if (!username) return alert('Please enter a username');
+            
+            fetch('/api/social', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username: username})
+            })
+            .then(response => response.json())
+            .then(data => displayResults('Social Media Analysis', data))
+            .catch(error => console.error('Error:', error));
+        }
+        
+        function analyzeIP() {
+            const ip = document.getElementById('ipInput').value;
+            if (!ip) return alert('Please enter an IP address');
+            
+            fetch('/api/ip', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ip_address: ip})
+            })
+            .then(response => response.json())
+            .then(data => displayResults('IP Analysis', data))
+            .catch(error => console.error('Error:', error));
+        }
+        
+        function searchShodan() {
+            const query = document.getElementById('shodanInput').value;
+            if (!query) return alert('Please enter a search query');
+            
+            fetch('/api/shodan', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({query: query, type: 'host'})
+            })
+            .then(response => response.json())
+            .then(data => displayResults('Shodan Search', data))
+            .catch(error => console.error('Error:', error));
+        }
+        
+        function displayResults(title, data) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <h5>${title} Results</h5>
+                    </div>
+                    <div class="card-body">
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html> 
